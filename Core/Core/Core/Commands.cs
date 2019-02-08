@@ -3,6 +3,7 @@ using Discord.Commands;
 using System.Threading.Tasks;
 
 // https://discord.foxbot.me/docs/guides/commands/commands.html
+// https://discord4j.readthedocs.io/en/latest/Making-embedded-content-using-EmbedBuilder/
 namespace Core
 {
     //[Group("!")]
@@ -30,7 +31,7 @@ namespace Core
 
         [Command("maplestory"), Summary(@"캐릭터명, 랭킹모드, 서버")]
         [Alias("m", "maple")]
-        public async Task Status([Summary("maple")] string charName = "", int mode = (int)Maplestory.Maplestory.modeList.Total, int server = (int)Maplestory.Maplestory.serverList.normalAll)
+        public async Task MapleStatus([Summary("maple")] string charName = "", int mode = (int)Maplestory.Maplestory.modeList.Total, int server = (int)Maplestory.Maplestory.serverList.normalAll)
         {
             EmbedBuilder builder = new EmbedBuilder();
             Maplestory.Maplestory maple = new Maplestory.Maplestory();
@@ -56,6 +57,40 @@ namespace Core
 
             // 다음동작을 위해 결과삭제
             Crawling.res_maple.RemoveRange(0, Crawling.res_maple.Count);
+
+            await ReplyAsync("", false, builder.Build());
+        }
+
+        [Command("lostark"), Summary(@"캐릭터명")]
+        [Alias("l", "loa")]
+        public async Task LostArkStatus([Summary("lostark")] string charName = "")
+        {
+            EmbedBuilder builder = new EmbedBuilder();
+
+            // 크롤링 시작
+            await Crawling.StartLostArkCrawlerasync(charName);
+
+            // 결과대기
+            while (!Crawling.loa_char.isMyTurn)
+            {
+                await Task.Delay(100);
+            }
+
+            lock (Crawling.loa_char)
+            {
+                builder.WithTitle($"[{Crawling.loa_char.char_lv} {Crawling.loa_char.name}]님의 정보")
+                    .WithImageUrl($"http:{Crawling.loa_char.cls_img}")
+                    .AddField("서버", $"{Crawling.loa_char.server}", true)
+                    .AddField("클래스", $"{Crawling.loa_char.cls}", true)
+                    .AddField("길드", Crawling.loa_char.guild, true)
+                    .AddField("아이템", Crawling.loa_char.item_lv, true)
+                    .AddField("원정대", Crawling.loa_char.acc_lv, true)
+                    .AddField("PVP", Crawling.loa_char.pvp_lv, true)
+                    .WithColor(Color.DarkPurple);
+
+                // 다음동작을 위해 결과삭제
+                Crawling.loa_char.isMyTurn = false;
+            }
 
             await ReplyAsync("", false, builder.Build());
         }
