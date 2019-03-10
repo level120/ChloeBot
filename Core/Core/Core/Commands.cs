@@ -29,7 +29,7 @@ namespace Core
             EmbedBuilder builder = new EmbedBuilder();
 
             builder.WithTitle("소울워커의 새로운 게시글을 감시합니다!")
-                .WithDescription("시작은 하지만 끌 수는 없답니다 :)")
+                .WithDescription("시작은 가능하지만 끌 수는 없답니다 :D")
                 .WithImageUrl("")
                 .WithColor(Color.Green);
             await ReplyAsync("", false, builder.Build());
