@@ -9,22 +9,17 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace cube.Core
 {
+    using global::Core;
+
     class DiscordBot
     {
-        private string TOKEN = "";
+        private string TOKEN { get; } = new StreamReader("discord.token").ReadLine();
         //private readonly UInt64 APP_ID = 539448802638036992;
 
         private DiscordSocketClient _client;
         private CommandService _commands;
         private IServiceProvider _services;
-
-
-        public DiscordBot()
-        {
-            TOKEN = new StreamReader("discord.token").ReadLine();
-        }
-
-
+        
         public async Task RunBotAsync()
         {
             _client = new DiscordSocketClient();
@@ -87,7 +82,7 @@ namespace cube.Core
 
         public async Task SetGamePlayAsync()
         {
-            await _client.SetGameAsync("Level120 | !help");
+            await _client.SetGameAsync("소울워커 감시 중..");
         }
     }
 }

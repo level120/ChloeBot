@@ -27,18 +27,18 @@ namespace Core
 
             lock (loa_char)
             {
-                loa_char.isMyTurn = true;
+                loa_char.IsMyTurn = true;
 
-                loa_char.char_lv = res[0].Descendants("h3").FirstOrDefault().InnerHtml.Split()[0];
-                loa_char.name = res[0].Descendants("h3").FirstOrDefault().InnerHtml.Split()[1];
-                loa_char.server = res[0].Descendants("span").ElementAt(1).InnerHtml;
-                loa_char.cls = res[0].Descendants("span").ElementAt(5).InnerHtml;
-                loa_char.guild = res[0].Descendants("span").ElementAt(3).InnerText;
-                loa_char.tag = res[0].Descendants("span").ElementAt(7).InnerText;
-                loa_char.item_lv = res[0].Descendants("span").ElementAt(9).InnerText;
-                loa_char.acc_lv = res[0].Descendants("span").ElementAt(11).InnerText;
-                loa_char.pvp_lv = res[0].Descendants("span").ElementAt(13).InnerText;
-                loa_char.cls_img = res[0].SelectNodes("//div[@class='profile-equipment__character']/img").FirstOrDefault().GetAttributeValue("src", "");
+                loa_char.CharLv = res[0].Descendants("h3").FirstOrDefault().InnerHtml.Split()[0];
+                loa_char.Name = res[0].Descendants("h3").FirstOrDefault().InnerHtml.Split()[1];
+                loa_char.Server = res[0].Descendants("span").ElementAt(1).InnerHtml;
+                loa_char.Cls = res[0].Descendants("span").ElementAt(5).InnerHtml;
+                loa_char.Guild = res[0].Descendants("span").ElementAt(3).InnerText;
+                loa_char.Tag = res[0].Descendants("span").ElementAt(7).InnerText;
+                loa_char.ItemLv = res[0].Descendants("span").ElementAt(9).InnerText;
+                loa_char.AccLv = res[0].Descendants("span").ElementAt(11).InnerText;
+                loa_char.PvpLv = res[0].Descendants("span").ElementAt(13).InnerText;
+                loa_char.ClsImg = res[0].SelectNodes("//div[@class='profile-equipment__character']/img").FirstOrDefault().GetAttributeValue("src", "");
             }
         }
 
