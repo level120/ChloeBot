@@ -80,11 +80,16 @@
                 temp.AddRange(target.GetRange(0, 3));
             }
 
-            news = temp.Except(olds).ToList();
+            var existNews = temp.Except(olds).ToList();
 
-            if (news.Count != 0)
+            if (existNews.Count != 0)
             {
-                FileDBWritter(news);
+                FileDBWritter(temp);
+            }
+
+            lock (news)
+            {
+                news = existNews;
             }
         }
 
@@ -117,9 +122,12 @@
         {
             using (StreamWriter w = new StreamWriter(@"db.txt"))
             {
-                foreach (var d in db)
+                lock (w)
                 {
-                    w.WriteLine(d);
+                    foreach (var d in db)
+                    {
+                        w.WriteLine(d);
+                    }
                 }
             }
         }
