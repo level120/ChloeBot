@@ -1,20 +1,7 @@
-﻿namespace Core.SoulworkerKR
+﻿using System.Collections.Generic;
+
+namespace ChloeBot.Soulworker
 {
-    using System.Collections.Generic;
-    using System.ComponentModel;
-
-    public enum eSoulworkerNewsType
-    {
-        [Description("공지사항")]
-        notices,
-        [Description("업데이트")]
-        updates,
-        [Description("이벤트")]
-        events,
-        [Description("GM매거진")]
-        gmMagazine
-    }
-
     public class SoulworkerKR
     {
         public static readonly string PrefixUrl = @"http://soulworker.game.onstove.com";

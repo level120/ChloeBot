@@ -1,6 +1,6 @@
-﻿namespace Core.Maplestory
+﻿namespace ChloeBot.Maplestory
 {
-    class Character
+    public class Character
     {
         public string rank { get; set; }
         public string changeRank { get; set; }

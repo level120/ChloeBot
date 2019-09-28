@@ -1,25 +1,25 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using ChloeBot.Crawling;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace cube.Core
+namespace ChloeBot.Core
 {
-    using global::Core;
-
-    class DiscordBot
+    public class DiscordBot
     {
-        private string TOKEN { get; } = new StreamReader("discord.token").ReadLine();
+        private string TOKEN { get; } = File.ReadAllText("Bot.token");
         //private readonly UInt64 APP_ID = 539448802638036992;
 
         private DiscordSocketClient _client;
         private CommandService _commands;
         private IServiceProvider _services;
-        
+
         public async Task RunBotAsync()
         {
             _client = new DiscordSocketClient();
@@ -33,12 +33,37 @@ namespace cube.Core
 
             //event subscriptions
             _client.Log += Log;
+            _client.Ready += Monitoring;
             _client.UserJoined += AnnounceUserJoined;
 
             await RegisterCommandsAsync();
             await _client.LoginAsync(TokenType.Bot, TOKEN);
             await _client.StartAsync();
             await Task.Delay(-1);
+        }
+
+        private async Task Monitoring()
+        {
+            while (true)
+            {
+                var result = SoulworkerMonitor.Run();
+
+                if (result.Any())
+                {
+                    foreach (var clientGuild in _client.Guilds)
+                    {
+                        var channel = _client.GetChannel(clientGuild.Id);
+
+                        if (channel is IMessageChannel c)
+                        {
+                            foreach (var builder in result)
+                                await c.SendMessageAsync(embed: builder.Build());
+                        }
+                    }
+                }
+
+                await Task.Delay(60_000);
+            }
         }
 
         private async Task AnnounceUserJoined(SocketGuildUser user)

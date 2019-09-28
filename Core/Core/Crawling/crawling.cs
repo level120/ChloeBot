@@ -1,21 +1,21 @@
-﻿using HtmlAgilityPack;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Linq;
-using System.Collections.Generic;
+using ChloeBot.Maplestory;
+using HtmlAgilityPack;
 
 /*
  * https://medium.com/@thepen0411/web-crawling-tutorial-in-c-48d921ef956a
  */
-namespace Core
+namespace ChloeBot.Crawling
 {
-    class Crawling
+    public class Crawling
     {
-        public static List<Maplestory.Character> res_maple = new List<Maplestory.Character>();
+        public static List<Character> ResMaple = new List<Character>();
 
-        public static async Task StartMapleCrawlerasync(string _url)
+        public static async Task StartMapleCrawlerasync(string url)
         {
-            var url = _url;
             var httpClient = new HttpClient();
             var html = await httpClient.GetStringAsync(url);
             var htmlDocument = new HtmlDocument();
@@ -24,18 +24,18 @@ namespace Core
             var res = htmlDocument.DocumentNode.Descendants("tr")
                 .Where(node => node.GetAttributeValue("class", "").Equals("search_com_chk")).ToList();
 
-            res_maple.RemoveRange(0, res_maple.Count);
+            ResMaple.RemoveRange(0, ResMaple.Count);
 
             if (res.Count != 0)
             {
                 foreach (var tr in res)
                 {
-                    var maple = new Maplestory.Character
+                    var maple = new Character
                     {
-                        rank = tr.Descendants("p").FirstOrDefault().InnerHtml.Substring(2).Split()[0],
-                        changeRank = tr.Descendants("span").FirstOrDefault().ChildNodes[4].InnerHtml.Split()[0],
-                        imgUrl = tr.ChildNodes[3].ChildNodes[1].Descendants("img").FirstOrDefault().ChildAttributes("src").FirstOrDefault().Value,
-                        imgServer = tr.ChildNodes[3].ChildNodes[3].Descendants("img").FirstOrDefault().ChildAttributes("src").FirstOrDefault().Value,
+                        rank = tr.Descendants("p").FirstOrDefault()?.InnerHtml.Substring(2).Split()[0] ?? string.Empty,
+                        changeRank = tr.Descendants("span").FirstOrDefault()?.ChildNodes[4].InnerHtml.Split()[0] ?? string.Empty,
+                        imgUrl = tr.ChildNodes[3].ChildNodes[1].Descendants("img").FirstOrDefault()?.ChildAttributes("src").FirstOrDefault()?.Value ?? string.Empty,
+                        imgServer = tr.ChildNodes[3].ChildNodes[3].Descendants("img").FirstOrDefault()?.ChildAttributes("src").FirstOrDefault()?.Value ?? string.Empty,
                         lv = tr.ChildNodes[5].InnerText,
                         exp = tr.ChildNodes[7].InnerText,
                         pop = tr.ChildNodes[9].InnerText,
@@ -44,12 +44,12 @@ namespace Core
                         name = tr.ChildNodes[3].ChildNodes[3].InnerText.Replace(" ", "").Split("\r\n")[1]
                     };
 
-                    res_maple.Add(maple);
+                    ResMaple.Add(maple);
                 }
             }
             else
             {
-                var maple = new Maplestory.Character
+                var maple = new Character
                 {
                     rank = "-",
                     changeRank = "-",
@@ -63,7 +63,7 @@ namespace Core
                     name = "결과없음"
                 };
 
-                res_maple.Add(maple);
+                ResMaple.Add(maple);
             }
         }
     }
