@@ -4,8 +4,7 @@ WORKDIR /
 
 RUN apt-get update && \
 	apt-get install -y git &&\
-	git clone https://github.com/level120/GameBot.git &&\
-	apt-get remove --purge -yq git
+	git clone https://github.com/level120/GameBot.git
 
 WORKDIR /GameBot/Core
 

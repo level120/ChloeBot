@@ -28,6 +28,7 @@ namespace ChloeBot.Core
                 .WithColor(Color.Orange);
 
             await ReplyAsync(embed: builder.Build());
+            await ReplyAsync(builder.Url);
         }
 
         [Command("help"), Summary(@"help")]

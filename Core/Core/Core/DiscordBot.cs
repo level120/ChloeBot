@@ -68,7 +68,12 @@ namespace ChloeBot.Core
                         if (channel is IMessageChannel c)
                         {
                             foreach (var builder in result)
+                            {
                                 await c.SendMessageAsync(embed: builder.Build());
+
+                                if (!string.IsNullOrEmpty(builder.Url))
+                                    await c.SendMessageAsync(builder.Url);
+                            }
                         }
                     }
                 }
