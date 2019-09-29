@@ -13,5 +13,6 @@ WORKDIR /GameBot/Core
 RUN dotnet build -c Release -r ubuntu.18.04-x64
 
 WORKDIR /GameBot
+RUN chmod 755 /GameBot/start.sh
 
 ENTRYPOINT ["./start.sh"]
