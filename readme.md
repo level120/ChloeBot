@@ -1,7 +1,16 @@
-# 디스코드 봇(C#)
+# Soulworker Monitoring Bot for Discord
 
-### 기능
+* Bot Name: `Chloe`
+* Permission: Only sending text and file(discord integer: `51200`)
 
-* 메이플 랭킹 검색(파싱목적)
+### Feature
 
-![](Doc/img/maple.PNG)
+Just Monitoring this on this page, [SoulworkerKR](http://soulworker.game.onstove.com).
+
+If bot has detected new posts, send default channel on all guilds at registered this bot.
+
+Monitoring targets:
+* Notice
+* Update
+* Event
+* GM Magazine

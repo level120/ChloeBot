@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
 using ChloeBot.Crawling;
@@ -13,12 +14,22 @@ namespace ChloeBot.Core
 {
     public class DiscordBot
     {
-        private string TOKEN { get; } = File.ReadAllText("Bot.token");
+        private const string _tokenName = "Bot.token";
+        private const string _tokenDownloadUrl = @"ftp://192.168.0.5/Bot.token";
+        private string TOKEN { get; } = GetToken();
         //private readonly UInt64 APP_ID = 539448802638036992;
 
         private DiscordSocketClient _client;
         private CommandService _commands;
         private IServiceProvider _services;
+
+        private static string GetToken()
+        {
+            if (File.Exists(_tokenName))
+                return File.ReadAllText(_tokenName);
+
+            return new WebClient().DownloadString(_tokenDownloadUrl);
+        }
 
         public async Task RunBotAsync()
         {
