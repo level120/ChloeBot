@@ -28,7 +28,7 @@ namespace ChloeBot.Crawling
 
             foreach (var imageUrl in Board.GetNews())
             {
-                var titleString = string.Empty;
+                string titleString;
                 var builder = new EmbedBuilder()
                 {
                     Color = Color.Orange,
@@ -47,7 +47,7 @@ namespace ChloeBot.Crawling
                 }
 
                 builder.WithTitle($"{titleString} 새로운 게시글이 올라왔어요!")
-                    .WithDescription(imageUrl);
+                    .WithUrl(imageUrl);
 
                 yield return builder;
             }
@@ -67,8 +67,8 @@ namespace ChloeBot.Crawling
 
                 var structPageInfo = new SoulworkerKR();
 
-                var targetType = string.Empty;
-                var targetTypeName = string.Empty;
+                string targetType;
+                string targetTypeName;
 
                 if (boardIdx < 2)
                 {
@@ -81,7 +81,8 @@ namespace ChloeBot.Crawling
                     targetTypeName = structPageInfo.ClassType[boardIdx].Ul;
                 }
 
-                var target = new List<string>();
+                List<string> target;
+
                 var res = _htmlDocument.DocumentNode.Descendants(targetType)
                     .Where(node => node.GetAttributeValue("class", "") == targetTypeName)
                     .ToList();

@@ -9,13 +9,22 @@ namespace ChloeBot.Core
 {
     public class Commands : ModuleBase<SocketCommandContext>
     {
-        [Command("ping")]
+        private static int _testCount = 0;
+        private static int TestCount => _testCount++ % 3;
+
+        [Command("test")]
         public async Task PingAsync()
         {
             var builder = new EmbedBuilder();
+            var testLink = new[]
+            {
+                @"http://soulworker.game.onstove.com/Notice/Detail/2433",
+                @"http://soulworker.game.onstove.com/Update/Detail/2427",
+                @"http://soulworker.game.onstove.com/GMMagazine/Detail/2434",
+            };
 
             builder.WithTitle("Ping!")
-                .WithDescription("Pong!")
+                .WithUrl(testLink[TestCount])
                 .WithColor(Color.Orange);
 
             await ReplyAsync(embed: builder.Build());
