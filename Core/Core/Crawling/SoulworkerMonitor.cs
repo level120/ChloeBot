@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
 using ChloeBot.Soulworker;
@@ -10,29 +9,24 @@ namespace ChloeBot.Crawling
 {
     public class SoulworkerMonitor
     {
-        private static List<string> News = new List<string>();
-        private static List<string> Temp = new List<string>();
-        private static List<string> Olds = new List<string>();
+        private static HttpClient _httpClient = new HttpClient();
+        private static HtmlDocument _htmlDocument = new HtmlDocument();
 
-        private static HttpClient HttpClient = new HttpClient();
-        private static HtmlDocument HtmlDocument = new HtmlDocument();
+        private const int _numOfBoards = 4;
+        private const string _filePath = @"db.txt";
+        private const int _allocateSize = 50; // list 형 게시글 15개 * 3, event 게시글 5개
 
-        private const int ContentsCount = 4;
-
-        public static IList<EmbedBuilder> Run()
-        {
-            UpdateBoardData();
-            var result = GetReplyBuilder().ToList();
-
-            if (result.Any())
-                News.Clear();
-
-            return result;
-        }
+        /// <summary>
+        /// 최신 글을 확인하고 그 결과를 반환합니다.
+        /// </summary>
+        /// <returns>최신 글 링크 목록</returns>
+        public static IList<EmbedBuilder> Run() => GetReplyBuilder().ToList();
 
         private static IEnumerable<EmbedBuilder> GetReplyBuilder()
         {
-            foreach (var imageUrl in News)
+            UpdateBoardData();
+
+            foreach (var imageUrl in Board.GetNews())
             {
                 var titleString = string.Empty;
                 var builder = new EmbedBuilder()
@@ -40,22 +34,20 @@ namespace ChloeBot.Crawling
                     Color = Color.Orange,
                 };
 
-                if (imageUrl.Contains("Notice")) titleString = "**[공지사항]**";
-                else if (imageUrl.Contains("Update")) titleString = "**[업데이트]**";
-                else if (imageUrl.Contains("GMMagazine")) titleString = "**[GM매거진]**";
+                if (imageUrl.Contains(Board.NoticeBoardName)) titleString = "**[공지사항]**";
+                else if (imageUrl.Contains(Board.DetailBoardName)) titleString = "**[업데이트]**";
+                else if (imageUrl.Contains(Board.GMBoardName)) titleString = "**[GM매거진]**";
                 else
                 {
                     titleString = "**[이벤트]**";
                     builder.WithTitle($"{titleString} 새로운 게시글이 올라왔어요!")
-                        .WithDescription("")
                         .WithImageUrl(imageUrl);
 
                     yield return builder;
                 }
 
                 builder.WithTitle($"{titleString} 새로운 게시글이 올라왔어요!")
-                    .WithDescription(imageUrl)
-                    .WithImageUrl("");
+                    .WithDescription(imageUrl);
 
                 yield return builder;
             }
@@ -63,37 +55,38 @@ namespace ChloeBot.Crawling
 
         private static async void UpdateBoardData()
         {
-            if (!Olds.Any())
-                Olds = FileDbReader();
+            Board.RecoveryItems(_filePath);
 
-            for (var idx = 0; idx < ContentsCount; ++idx)
+            var targetItems = new List<string>(_allocateSize);
+
+            foreach (var boardIdx in Enumerable.Range(0, _numOfBoards))
             {
-                var url = SoulworkerKR.Urls[idx];
-                var html = await HttpClient.GetStringAsync(url);
-                HtmlDocument.LoadHtml(html);
+                var url = SoulworkerKR.Urls[boardIdx];
+                var html = await _httpClient.GetStringAsync(url);
+                _htmlDocument.LoadHtml(html);
 
                 var structPageInfo = new SoulworkerKR();
 
                 var targetType = string.Empty;
                 var targetTypeName = string.Empty;
 
-                if (idx < 2)
+                if (boardIdx < 2)
                 {
                     targetType = "table";
-                    targetTypeName = structPageInfo.ClassType[idx].Table;
+                    targetTypeName = structPageInfo.ClassType[boardIdx].Table;
                 }
                 else
                 {
                     targetType = "ul";
-                    targetTypeName = structPageInfo.ClassType[idx].Ul;
+                    targetTypeName = structPageInfo.ClassType[boardIdx].Ul;
                 }
 
                 var target = new List<string>();
-                var res = HtmlDocument.DocumentNode.Descendants(targetType)
+                var res = _htmlDocument.DocumentNode.Descendants(targetType)
                     .Where(node => node.GetAttributeValue("class", "") == targetTypeName)
                     .ToList();
 
-                if (idx < 2)
+                if (boardIdx < 2)
                 {
                     target = res.FirstOrDefault()
                         ?.Descendants("tbody").FirstOrDefault()
@@ -102,9 +95,9 @@ namespace ChloeBot.Crawling
                         .Select(p => SoulworkerKR.PrefixUrl + p.ChildNodes.FirstOrDefault()?.GetAttributeValue("href", ""))
                         .ToList();
                 }
-                else if (idx == 2)
+                else if (boardIdx == 2)
                 {
-                    res = HtmlDocument.DocumentNode.Descendants(targetType).ToList();
+                    res = _htmlDocument.DocumentNode.Descendants(targetType).ToList();
 
                     target = res.FirstOrDefault()
                         ?.Descendants("div")
@@ -122,58 +115,11 @@ namespace ChloeBot.Crawling
                 }
 
                 if (target != null && target.Any())
-                    Temp.AddRange(target);
+                    targetItems.AddRange(target);
             }
 
-            if (!ParseData())
-                return;
-
-            var existNews = Temp.Except(Olds).ToList();
-            if (existNews.Any())
-            {
-                ChangeData(existNews);
-                FileDBWritter(Temp);
-            }
-        }
-
-        private static bool ParseData()
-        {
-            if (!Olds.Any())
-            {
-                FileDBWritter(Temp);
-                Olds.AddRange(Temp);
-                return false;
-            }
-
-            // todo: url 별로 구분해 Olds에 저장하고 마지막 숫자로 구분(이벤트는 별개로 진행, 숫자가 매우 크니 stringCompare 사용)
-
-            return true;
-        }
-
-        private static void ChangeData(IEnumerable<string> existNews)
-        {
-            Olds.Clear();
-            Olds.AddRange(Temp);
-
-            News.Clear();
-            News.AddRange(existNews);
-        }
-
-        private static List<string> FileDbReader()
-        {
-            var res = new List<string>();
-            var dbName = @"db.txt";
-
-            if (!File.Exists(dbName))
-                File.Create(dbName).Close();
-
-            res.AddRange(File.ReadAllLines(dbName));
-            return res;
-        }
-
-        private static void FileDBWritter(IEnumerable<string> db)
-        {
-            File.WriteAllLines(@"db.txt", db);
+            if (targetItems.Any())
+                Board.SetData(targetItems);
         }
     }
 }
