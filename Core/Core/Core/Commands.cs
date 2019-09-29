@@ -29,7 +29,7 @@ namespace ChloeBot.Core
 
             builder.WithTitle("소울워커의 새로운 게시글을 감시합니다!")
                 .WithDescription("그 이외 다른 기능은 없습니다!")
-                .WithImageUrl(@"https://www.facebook.com/1610107679252791/photos/2191228961140657")
+                .WithImageUrl(@"https://i.imgur.com/hsV3Tk1.png")
                 .WithColor(Color.Green);
             await ReplyAsync(embed: builder.Build());
         }
