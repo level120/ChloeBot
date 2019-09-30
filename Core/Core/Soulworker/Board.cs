@@ -12,18 +12,18 @@ namespace ChloeBot.Soulworker
         public const string GMBoardName = "GMMagazine";
         public const string EventBoardName = "Event"; // _event, Promotion etc..
 
-        private static string _notice { get; set; } = string.Empty;
-        private static string _detail { get; set; } = string.Empty;
-        private static string _event { get; set; } = string.Empty;
-        private static string _gmMagazine { get; set; } = string.Empty;
+        public static string Notice { get; private set; } = string.Empty;
+        public static string Detail { get; private set; } = string.Empty;
+        public static string Event { get; private set; } = string.Empty;
+        public static string GMMagazine { get; private set; } = string.Empty;
         private static List<string> _newItems { get; } = new List<string>();
         private static int _boardNums { get; } = Enum.GetNames(typeof(eSoulworkerNewsType)).Length;
         private static string _filePath;
 
         private static bool _isUpdated => _newItems.Any();
         private static bool _isEmptyData =>
-            _notice == string.Empty || _detail == string.Empty ||
-            _event == string.Empty || _gmMagazine == string.Empty;
+            Notice == string.Empty || Detail == string.Empty ||
+            Event == string.Empty || GMMagazine == string.Empty;
 
         /// <summary>
         /// 파일에 저장된 정보로 최신글 동향을 복구합니다
@@ -43,10 +43,10 @@ namespace ChloeBot.Soulworker
                 if (data.Length != _boardNums)
                     return;
 
-                _notice = data[(int)eSoulworkerNewsType.notices];
-                _detail = data[(int)eSoulworkerNewsType.updates];
-                _event = data[(int)eSoulworkerNewsType.events];
-                _gmMagazine = data[(int)eSoulworkerNewsType.gmMagazine];
+                Notice = data[(int)eSoulworkerNewsType.notices];
+                Detail = data[(int)eSoulworkerNewsType.updates];
+                Event = data[(int)eSoulworkerNewsType.events];
+                GMMagazine = data[(int)eSoulworkerNewsType.gmMagazine];
             }
         }
 
@@ -61,38 +61,38 @@ namespace ChloeBot.Soulworker
             var gmMagazineItems = urls.Where(item => item.Contains(GMBoardName)).ToList();
             var eventItems = urls.Except(noticeItems).Except(detailItems).Except(gmMagazineItems).ToList();
 
-            if (_notice != string.Empty)
+            if (Notice != string.Empty)
             {
-                var item = GetNewItems(_notice, noticeItems)?.ToList();
+                var item = GetNewItems(Notice, noticeItems)?.ToList();
                 if (item?.Any() ?? false)
                     _newItems.AddRange(item);
             }
 
-            if (_detail != string.Empty)
+            if (Detail != string.Empty)
             {
-                var item = GetNewItems(_detail, detailItems)?.ToList();
+                var item = GetNewItems(Detail, detailItems)?.ToList();
                 if (item?.Any() ?? false)
                     _newItems.AddRange(item);
             }
 
-            if (_gmMagazine != string.Empty)
+            if (GMMagazine != string.Empty)
             {
-                var item = GetNewItems(_gmMagazine, gmMagazineItems)?.ToList();
+                var item = GetNewItems(GMMagazine, gmMagazineItems)?.ToList();
                 if (item?.Any() ?? false)
                     _newItems.AddRange(item);
             }
 
-            if (_event != string.Empty)
+            if (Event != string.Empty)
             {
-                var item = GetNewItems(_event, eventItems)?.ToList();
+                var item = GetNewItems(Event, eventItems)?.ToList();
                 if (item?.Any() ?? false)
                     _newItems.AddRange(item);
             }
 
-            _notice = noticeItems.FirstOrDefault() ?? string.Empty;
-            _detail = detailItems.FirstOrDefault() ?? string.Empty;
-            _gmMagazine = gmMagazineItems.FirstOrDefault() ?? string.Empty;
-            _event = eventItems.FirstOrDefault() ?? string.Empty;
+            Notice = noticeItems.FirstOrDefault() ?? string.Empty;
+            Detail = detailItems.FirstOrDefault() ?? string.Empty;
+            GMMagazine = gmMagazineItems.FirstOrDefault() ?? string.Empty;
+            Event = eventItems.FirstOrDefault() ?? string.Empty;
         }
 
         private static IEnumerable<string> GetNewItems(string item, List<string> items)
@@ -129,10 +129,10 @@ namespace ChloeBot.Soulworker
         {
             var data = new[]
             {
-                _notice,
-                _detail,
-                _event,
-                _gmMagazine,
+                Notice,
+                Detail,
+                Event,
+                GMMagazine,
             };
 
             File.WriteAllLines(_filePath, data);

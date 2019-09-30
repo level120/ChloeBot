@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using ChloeBot.Maplestory;
+using ChloeBot.Soulworker;
 using Discord;
 using Discord.Commands;
 
@@ -9,22 +10,65 @@ namespace ChloeBot.Core
 {
     public class Commands : ModuleBase<SocketCommandContext>
     {
-        private static int _testCount = 0;
-        private static int TestCount => _testCount++ % 3;
+        private string GetAssemVersion => GetType().Assembly.GetName().Version.ToString();
 
-        [Command("test")]
-        public async Task PingAsync()
+        [Command("ver")]
+        public async Task VersionAsync()
         {
             var builder = new EmbedBuilder();
-            var testLink = new[]
-            {
-                @"http://soulworker.game.onstove.com/Notice/Detail/2433",
-                @"http://soulworker.game.onstove.com/Update/Detail/2427",
-                @"http://soulworker.game.onstove.com/GMMagazine/Detail/2434",
-            };
 
-            builder.WithTitle("Ping!")
-                .WithUrl(testLink[TestCount])
+            builder.WithTitle("Chloe Bot Version Info")
+                .WithUrl(GetAssemVersion)
+                .WithColor(Color.Orange);
+
+            await ReplyAsync(embed: builder.Build());
+        }
+
+        [Command("notice"), Alias("n")]
+        public async Task LastNoticeAsync()
+        {
+            var builder = new EmbedBuilder();
+
+            builder.WithTitle("마지막으로 등록된 공지사항 글이에요!")
+                .WithUrl(Board.Notice)
+                .WithColor(Color.Orange);
+
+            await ReplyAsync(embed: builder.Build());
+            await ReplyAsync(builder.Url);
+        }
+
+        [Command("update"), Alias("u")]
+        public async Task LastUpdateAsync()
+        {
+            var builder = new EmbedBuilder();
+
+            builder.WithTitle("마지막으로 등록된 업데이트 글이에요!")
+                .WithUrl(Board.Detail)
+                .WithColor(Color.Orange);
+
+            await ReplyAsync(embed: builder.Build());
+            await ReplyAsync(builder.Url);
+        }
+
+        [Command("event"), Alias("e")]
+        public async Task LastEventAsync()
+        {
+            var builder = new EmbedBuilder();
+
+            builder.WithTitle("마지막으로 등록된 이벤트 글이에요!")
+                .WithImageUrl(Board.Event)
+                .WithColor(Color.Orange);
+
+            await ReplyAsync(embed: builder.Build());
+        }
+
+        [Command("gmmagazine"), Alias("gm")]
+        public async Task LastGmMagazineAsync()
+        {
+            var builder = new EmbedBuilder();
+
+            builder.WithTitle("마지막으로 등록된 GM매거진 글이에요!")
+                .WithUrl(Board.GMMagazine)
                 .WithColor(Color.Orange);
 
             await ReplyAsync(embed: builder.Build());
