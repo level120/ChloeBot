@@ -44,6 +44,7 @@ namespace ChloeBot.Crawling
                         .WithImageUrl(imageUrl);
 
                     yield return builder;
+                    continue;
                 }
 
                 builder.WithTitle($"{titleString} 새로운 게시글이 올라왔어요!")

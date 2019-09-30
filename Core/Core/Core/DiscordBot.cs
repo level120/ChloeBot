@@ -71,7 +71,7 @@ namespace ChloeBot.Core
                             {
                                 await c.SendMessageAsync(embed: builder.Build());
 
-                                if (!string.IsNullOrEmpty(builder.Url))
+                                if (!builder.Title.Contains("이벤트"))
                                     await c.SendMessageAsync(builder.Url);
                             }
                         }
