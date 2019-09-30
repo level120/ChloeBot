@@ -18,7 +18,7 @@ namespace ChloeBot.Core
             var builder = new EmbedBuilder();
 
             builder.WithTitle("Chloe Bot Version Info")
-                .WithUrl(GetAssemVersion)
+                .WithDescription(GetAssemVersion)
                 .WithColor(Color.Orange);
 
             await ReplyAsync(embed: builder.Build());
