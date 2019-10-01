@@ -63,16 +63,14 @@ namespace ChloeBot.Core
                 {
                     foreach (var clientGuild in _client.Guilds)
                     {
-                        var channel = _client.GetChannel(clientGuild.Id);
-
-                        if (channel is IMessageChannel c)
+                        if (clientGuild.DefaultChannel is IMessageChannel channel)
                         {
                             foreach (var builder in result)
                             {
-                                await c.SendMessageAsync(embed: builder.Build());
+                                await channel.SendMessageAsync(embed: builder.Build());
 
                                 if (!builder.Title.Contains("이벤트"))
-                                    await c.SendMessageAsync(builder.Url);
+                                    await channel.SendMessageAsync(builder.Url);
                             }
                         }
                     }
