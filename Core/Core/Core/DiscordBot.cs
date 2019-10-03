@@ -25,6 +25,7 @@ namespace ChloeBot.Core
 
         private static string GetToken()
         {
+            // debug mode only
             if (File.Exists(_tokenName))
                 return File.ReadAllText(_tokenName);
 
@@ -45,7 +46,6 @@ namespace ChloeBot.Core
             //event subscriptions
             _client.Log += Log;
             _client.Ready += Monitoring;
-            _client.UserJoined += AnnounceUserJoined;
 
             await RegisterCommandsAsync();
             await _client.LoginAsync(TokenType.Bot, TOKEN);
@@ -78,13 +78,6 @@ namespace ChloeBot.Core
 
                 await Task.Delay(60_000);
             }
-        }
-
-        private async Task AnnounceUserJoined(SocketGuildUser user)
-        {
-            var guild = user.Guild;
-            var channel = guild.DefaultChannel;
-            await channel.SendMessageAsync($"Welcome, {user.Mention}");
         }
 
         private Task Log(LogMessage arg)

@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using ChloeBot.Maplestory;
 using ChloeBot.Soulworker;
 using Discord;
 using Discord.Commands;
@@ -85,38 +84,6 @@ namespace ChloeBot.Core
                 .WithDescription("그 이외 다른 기능은 없습니다!")
                 .WithImageUrl(@"https://i.imgur.com/hsV3Tk1.png")
                 .WithColor(Color.Green);
-            await ReplyAsync(embed: builder.Build());
-        }
-
-        [Command("maplestory"), Summary(@"캐릭터명, 랭킹모드, 서버")]
-        [Alias("m", "maple")]
-        public async Task MapleStatus([Summary("maple")] string charName = "", eModeList mode = eModeList.Total, eServerList server = eServerList.normalAll)
-        {
-            var builder = new EmbedBuilder();
-            var maple = new MaplestoryKR();
-
-            // 크롤링 시작
-            await Crawling.Crawling.StartMapleCrawlerasync(maple.GetCrawlingUrls(server, mode, charName));
-
-            // 결과대기
-            while (Crawling.Crawling.ResMaple.Count == 0)
-            {
-                await Task.Delay(100);
-            }
-
-            builder.WithTitle($"{Crawling.Crawling.ResMaple[0].name}님의 랭킹정보")
-                .WithImageUrl(Crawling.Crawling.ResMaple[0].imgUrl)
-                .AddField("순위", $"{Crawling.Crawling.ResMaple[0].rank} 위\n({Crawling.Crawling.ResMaple[0].changeRank})", true)
-                .AddField("캐릭터 정보", $"{Crawling.Crawling.ResMaple[0].name}\n{Crawling.Crawling.ResMaple[0].job}", true)
-                .AddField("레벨", Crawling.Crawling.ResMaple[0].lv, true)
-                .AddField("경험치", Crawling.Crawling.ResMaple[0].exp, true)
-                .AddField("인기도", Crawling.Crawling.ResMaple[0].pop, true)
-                .AddField("길드", Crawling.Crawling.ResMaple[0].guild, true)
-                .WithColor(Color.Gold);
-
-            // 다음동작을 위해 결과삭제
-            Crawling.Crawling.ResMaple.RemoveRange(0, Crawling.Crawling.ResMaple.Count);
-
             await ReplyAsync(embed: builder.Build());
         }
     }
