@@ -5,6 +5,9 @@ using System.Linq;
 
 namespace ChloeBot.Soulworker
 {
+    /// <summary>
+    /// 게시글과 관련된 정보
+    /// </summary>
     internal sealed class Board
     {
         public const string NoticeBoardName = "Notice";
@@ -53,7 +56,7 @@ namespace ChloeBot.Soulworker
         /// <summary>
         /// 최신 글 정보를 반영합니다.
         /// </summary>
-        /// <param name="urls">게시판으로부터 파싱된 url 목록</param>
+        /// <param name="urls">Crawler로부터 받은 url 목록</param>
         public static void SetData(IList<string> urls)
         {
             var noticeItems = urls.Where(item => item.Contains(NoticeBoardName)).ToList();

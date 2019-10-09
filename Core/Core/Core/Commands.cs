@@ -7,9 +7,12 @@ using Discord.Commands;
 // https://discord4j.readthedocs.io/en/latest/Making-embedded-content-using-EmbedBuilder/
 namespace ChloeBot.Core
 {
+    /// <summary>
+    /// ChloeBot의 모든 명령어
+    /// </summary>
     public class Commands : ModuleBase<SocketCommandContext>
     {
-        private string GetAssemVersion => GetType().Assembly.GetName().Version.ToString();
+        private string AssemVersion => GetType().Assembly.GetName().Version.ToString();
 
         [Command("ver")]
         public async Task VersionAsync()
@@ -17,7 +20,7 @@ namespace ChloeBot.Core
             var builder = new EmbedBuilder();
 
             builder.WithTitle("Chloe Bot Version Info")
-                .WithDescription(GetAssemVersion)
+                .WithDescription(AssemVersion)
                 .WithColor(Color.Orange);
 
             await ReplyAsync(embed: builder.Build());

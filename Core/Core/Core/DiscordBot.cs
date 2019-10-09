@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -23,6 +24,11 @@ namespace ChloeBot.Core
         private CommandService _commands;
         private IServiceProvider _services;
 
+        public DiscordBot()
+        {
+            Task.Run(Monitoring);
+        }
+
         private static string GetToken()
         {
             // debug mode only
@@ -45,7 +51,6 @@ namespace ChloeBot.Core
 
             //event subscriptions
             _client.Log += Log;
-            _client.Ready += Monitoring;
 
             await RegisterCommandsAsync();
             await _client.LoginAsync(TokenType.Bot, TOKEN);
@@ -55,28 +60,37 @@ namespace ChloeBot.Core
 
         private async Task Monitoring()
         {
+            await Task.Delay(30_000);
+
             while (true)
             {
                 var result = SoulworkerMonitor.Run();
 
                 if (result.Any())
-                {
-                    foreach (var clientGuild in _client.Guilds)
-                    {
-                        if (clientGuild.DefaultChannel is IMessageChannel channel)
-                        {
-                            foreach (var builder in result)
-                            {
-                                await channel.SendMessageAsync(embed: builder.Build());
-
-                                if (!builder.Title.Contains("이벤트"))
-                                    await channel.SendMessageAsync(builder.Url);
-                            }
-                        }
-                    }
-                }
+                    await SendMessage(result);
 
                 await Task.Delay(60_000);
+            }
+        }
+
+        private async Task SendMessage(IList<EmbedBuilder> result)
+        {
+            foreach (var clientGuild in _client.Guilds)
+            {
+                if (clientGuild.DefaultChannel is IMessageChannel channel)
+                {
+                    foreach (var builder in result)
+                    {
+                        Console.WriteLine("Target: " + channel.Name);
+
+                        await channel.SendMessageAsync(embed: builder.Build());
+
+                        if (!builder.Title.Contains("이벤트"))
+                            await channel.SendMessageAsync(builder.Url);
+
+                        Console.WriteLine($"{channel.Name} send message successfully");
+                    }
+                }
             }
         }
 
