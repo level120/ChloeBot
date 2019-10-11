@@ -3,6 +3,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
 
 namespace ChloeBot.Core
 {
@@ -69,8 +70,14 @@ namespace ChloeBot.Core
                 public class ListCommands : ModuleBase<SocketCommandContext>
                 {
                     [Command("guild")]
-                    public async Task CreateGuildListAsync()
+                    public async Task CreateGuildListAsync(SocketUser user = null)
                     {
+                        if (user == null)
+                            user = Context.User;
+
+                        if (user.Id != 275540899973300225)
+                            return;
+
                         var builder = new EmbedBuilder();
                         var msg = new StringBuilder();
 

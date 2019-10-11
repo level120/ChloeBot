@@ -8,9 +8,9 @@
     <AssemblyName>ChloeBot</AssemblyName>
     <RootNamespace>ChloeBot</RootNamespace>
     <ApplicationIcon>i13159870968.ico</ApplicationIcon>
-    <AssemblyVersion>1.0.1</AssemblyVersion>
+    <AssemblyVersion>1.0.2</AssemblyVersion>
     <FileVersion>1.0.1</FileVersion>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
   </PropertyGroup>
 
   <ItemGroup>

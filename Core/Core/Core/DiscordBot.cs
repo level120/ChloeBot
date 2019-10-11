@@ -50,7 +50,6 @@ namespace ChloeBot.Core
 
             //event subscriptions
             _client.Log += Log;
-            _client.Ready += Monitoring;
 
             await RegisterCommandsAsync();
             await _client.LoginAsync(TokenType.Bot, TOKEN);
@@ -60,15 +59,18 @@ namespace ChloeBot.Core
 
         private async Task Monitoring()
         {
-            while (true)
+            await Task.Run(async() =>
             {
-                var result = SoulworkerMonitor.Run();
+                while (true)
+                {
+                    var result = SoulworkerMonitor.Run();
 
-                if (result.Any())
-                    await SendMessage(result);
+                    if (result.Any())
+                        await SendMessage(result);
 
-                await Task.Delay(60_000);
-            }
+                    await Task.Delay(60_000);
+                }
+            });
         }
 
         private async Task SendMessage(IList<EmbedBuilder> result)
@@ -99,6 +101,7 @@ namespace ChloeBot.Core
         public async Task RegisterCommandsAsync()
         {
             _client.Ready += SetGamePlayAsync;
+            _client.Ready += Monitoring;
             _client.MessageReceived += HandleCommandAsync;
 
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
