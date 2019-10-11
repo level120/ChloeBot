@@ -20,11 +20,13 @@ namespace ChloeBot.Core
         private string TOKEN { get; } = GetToken();
         //private readonly UInt64 APP_ID = 539448802638036992;
 
-        private DiscordSocketClient _client;
+        private static DiscordSocketClient _client;
         private CommandService _commands;
         private IServiceProvider _services;
 
-        private IReadOnlyCollection<SocketGuild> Guilds => _client?.Guilds;
+        private IReadOnlyCollection<SocketGuild> Guilds => Client.Guilds;
+
+        public static DiscordSocketClient Client => _client ?? throw new ArgumentNullException();
 
         public DiscordBot()
         {
@@ -96,7 +98,7 @@ namespace ChloeBot.Core
 
         private Task Log(LogMessage arg)
         {
-            Console.WriteLine(arg);
+            Console.WriteLine($"[{DateTime.Now:HH:mm:ss}]\t{arg}");
             return Task.CompletedTask;
         }
 
@@ -110,9 +112,8 @@ namespace ChloeBot.Core
 
         private async Task HandleCommandAsync(SocketMessage arg)
         {
-            var message = arg as SocketUserMessage;
-
-            if (message is null || message.Author.IsBot) return;
+            if (!(arg is SocketUserMessage message) || message.Author.IsBot)
+                return;
 
             int argPos = 0;
 

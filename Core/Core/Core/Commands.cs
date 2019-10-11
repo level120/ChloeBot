@@ -12,20 +12,6 @@ namespace ChloeBot.Core
     /// </summary>
     public class Commands : ModuleBase<SocketCommandContext>
     {
-        private string AssemVersion => GetType().Assembly.GetName().Version.ToString();
-
-        [Command("ver")]
-        public async Task VersionAsync()
-        {
-            var builder = new EmbedBuilder();
-
-            builder.WithTitle("Chloe Bot Version Info")
-                .WithDescription(AssemVersion)
-                .WithColor(Color.Orange);
-
-            await ReplyAsync(embed: builder.Build());
-        }
-
         [Command("notice"), Alias("n")]
         public async Task LastNoticeAsync()
         {
