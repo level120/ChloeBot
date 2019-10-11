@@ -24,6 +24,8 @@ namespace ChloeBot.Core
         private CommandService _commands;
         private IServiceProvider _services;
 
+        private IReadOnlyCollection<SocketGuild> Guilds => _client?.Guilds;
+
         public DiscordBot()
         {
             Task.Run(Monitoring);
@@ -75,20 +77,18 @@ namespace ChloeBot.Core
 
         private async Task SendMessage(IList<EmbedBuilder> result)
         {
-            foreach (var clientGuild in _client.Guilds)
+            foreach (var clientGuild in Guilds)
             {
                 if (clientGuild.DefaultChannel is IMessageChannel channel)
                 {
                     foreach (var builder in result)
                     {
-                        Console.WriteLine("Target: " + channel.Name);
-
                         await channel.SendMessageAsync(embed: builder.Build());
 
                         if (!builder.Title.Contains("이벤트"))
                             await channel.SendMessageAsync(builder.Url);
 
-                        Console.WriteLine($"{channel.Name} send message successfully");
+                        Console.WriteLine($"{DateTime.Now:HH:mm:ss}\t[{clientGuild.Name}-{channel.Name}] Send message successfully");
                     }
                 }
             }
