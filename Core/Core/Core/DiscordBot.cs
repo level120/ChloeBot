@@ -28,11 +28,6 @@ namespace ChloeBot.Core
 
         public static DiscordSocketClient Client => _client ?? throw new ArgumentNullException();
 
-        public DiscordBot()
-        {
-            Task.Run(Monitoring);
-        }
-
         private static string GetToken()
         {
             // debug mode only
@@ -55,6 +50,7 @@ namespace ChloeBot.Core
 
             //event subscriptions
             _client.Log += Log;
+            _client.Ready += Monitoring;
 
             await RegisterCommandsAsync();
             await _client.LoginAsync(TokenType.Bot, TOKEN);
