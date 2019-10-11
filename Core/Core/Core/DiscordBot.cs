@@ -60,8 +60,6 @@ namespace ChloeBot.Core
 
         private async Task Monitoring()
         {
-            await Task.Delay(30_000);
-
             while (true)
             {
                 var result = SoulworkerMonitor.Run();
