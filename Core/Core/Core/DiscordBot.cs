@@ -127,7 +127,7 @@ namespace ChloeBot.Core
 
         public async Task SetGamePlayAsync()
         {
-            await _client.SetGameAsync("소울워커 감시 중..");
+            await _client.SetGameAsync("소울워커 감시");
         }
     }
 }
