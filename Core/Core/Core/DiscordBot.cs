@@ -57,9 +57,9 @@ namespace ChloeBot.Core
             await Task.Delay(-1);
         }
 
-        private async Task Monitoring()
+        private Task Monitoring()
         {
-            await Task.Run(async() =>
+            Task.Run(async() =>
             {
                 while (true)
                 {
@@ -71,6 +71,7 @@ namespace ChloeBot.Core
                     await Task.Delay(60_000);
                 }
             });
+            return Task.CompletedTask;
         }
 
         private async Task SendMessage(IList<EmbedBuilder> result)
