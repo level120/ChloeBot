@@ -24,7 +24,9 @@ namespace ChloeBot.Core
         private CommandService _commands;
         private IServiceProvider _services;
 
-        private IReadOnlyCollection<SocketGuild> Guilds => Client.Guilds;
+        private Task _monitor;
+
+        private IReadOnlyCollection<SocketGuild> Guilds => Client.Guilds.ToList();
 
         public static DiscordSocketClient Client => _client ?? throw new ArgumentNullException();
 
@@ -59,36 +61,40 @@ namespace ChloeBot.Core
 
         private Task Monitoring()
         {
-            Task.Run(async() =>
+            if (_monitor == null)
             {
-                while (true)
+                _monitor = Task.Run(async () =>
                 {
-                    var result = SoulworkerMonitor.Run();
+                    while (true)
+                    {
+                        var result = SoulworkerMonitor.Run();
 
-                    if (result.Any())
-                        await SendMessage(result);
+                        if (result.Any())
+                            await SendMessage(result);
 
-                    await Task.Delay(60_000);
-                }
-            });
+                        await Task.Delay(60_000);
+                    }
+                });
+            }
             return Task.CompletedTask;
         }
 
         private async Task SendMessage(IList<EmbedBuilder> result)
         {
-            foreach (var clientGuild in Guilds)
+            Console.Error.WriteLine($"{DateTime.Now:HH:mm:ss}\tRegistered channel count: {Guilds.Count}");
+            foreach (var client in Guilds)
             {
-                if (clientGuild.DefaultChannel is IMessageChannel channel)
+                var channel = client.DefaultChannel;
+                Console.Error.WriteLine($"{DateTime.Now:HH:mm:ss}\t[{client.Name}-{channel.Name}] The bot will send target count: {result.Count}");
+
+                foreach (var builder in result)
                 {
-                    foreach (var builder in result)
-                    {
-                        await channel.SendMessageAsync(embed: builder.Build());
+                    await channel.SendMessageAsync(embed: builder.Build());
 
-                        if (!builder.Title.Contains("이벤트"))
-                            await channel.SendMessageAsync(builder.Url);
+                    if (!builder.Title.Contains("이벤트"))
+                        await channel.SendMessageAsync(builder.Url);
 
-                        Console.WriteLine($"{DateTime.Now:HH:mm:ss}\t[{clientGuild.Name}-{channel.Name}] Send message successfully");
-                    }
+                    Console.Error.WriteLine($"{DateTime.Now:HH:mm:ss}\t[{client.Name}-{channel.Name}] Send message successfully");
                 }
             }
         }

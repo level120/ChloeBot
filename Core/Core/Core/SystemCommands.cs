@@ -3,7 +3,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
-using Discord.WebSocket;
 
 namespace ChloeBot.Core
 {
@@ -70,16 +69,16 @@ namespace ChloeBot.Core
                 public class ListCommands : ModuleBase<SocketCommandContext>
                 {
                     [Command("guild")]
-                    public async Task CreateGuildListAsync(SocketUser user = null)
+                    public async Task CreateGuildListAsync()
                     {
-                        if (user == null)
-                            user = Context.User;
-
-                        if (user.Id != 275540899973300225)
+                        if (Context.User.Id != 275540899973300225)
                             return;
 
                         var builder = new EmbedBuilder();
                         var msg = new StringBuilder();
+
+                        msg.AppendLine("Registered channel count: " + DiscordBot.Client.Guilds.Count);
+                        msg.AppendLine("===========================");
 
                         foreach (var clientGuild in DiscordBot.Client.Guilds)
                             msg.AppendLine($"{clientGuild.Name} - {clientGuild.DefaultChannel.Name}");
