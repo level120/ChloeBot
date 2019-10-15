@@ -24,7 +24,7 @@ namespace ChloeBot.Core
         private CommandService _commands;
         private IServiceProvider _services;
 
-        private Task _monitor;
+        private static Task _monitor;
 
         private IReadOnlyCollection<SocketGuild> Guilds => Client.Guilds.ToList();
 
@@ -96,6 +96,8 @@ namespace ChloeBot.Core
 
                     Console.Error.WriteLine($"{DateTime.Now:HH:mm:ss}\t[{client.Name}-{channel.Name}] Send message successfully");
                 }
+
+                await Task.Delay(300);
             }
         }
 
