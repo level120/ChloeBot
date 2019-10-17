@@ -10,7 +10,7 @@ rm -rf /GameBot/Core/Core/bin
 dotnet build -c Release -r ubuntu.18.04-x64
 
 # Change permission to runable
-cd /GameBot/Core/Core/bin/Release/netcoreapp3.0/ubuntu.18.04-x64
+cd /GameBot/Core/Core/bin/Release/netcoreapp2.1/ubuntu.18.04-x64
 chmod 755 ChloeBot
 
 # Run discord bot

@@ -41,6 +41,7 @@ namespace ChloeBot.Crawling
                 {
                     titleString = "**[이벤트]**";
                     builder.WithTitle($"{titleString} 새로운 게시글이 올라왔어요!")
+                        .WithUrl("http://soulworker.game.onstove.com/Event")
                         .WithImageUrl(imageUrl);
 
                     yield return builder;
