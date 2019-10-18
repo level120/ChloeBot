@@ -96,6 +96,8 @@ namespace ChloeBot.Core
 
                     Console.Error.WriteLine($"{DateTime.Now:HH:mm:ss}\t[{client.Name}-{channel.Name}] Send message successfully");
                 }
+
+                await Task.Delay(1000);
             }
         }
 
