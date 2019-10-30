@@ -96,8 +96,6 @@ namespace ChloeBot.Core
 
                     Console.Error.WriteLine($"{DateTime.Now:HH:mm:ss}\t[{client.Name}-{channel.Name}] Send message successfully");
                 }
-
-                await Task.Delay(1000);
             }
         }
 
@@ -135,7 +133,7 @@ namespace ChloeBot.Core
 
         public async Task SetGamePlayAsync()
         {
-            await _client.SetGameAsync("소울워커 감시");
+            await _client.SetGameAsync("Node.js로 마이그레이션");
         }
     }
 }
