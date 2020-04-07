@@ -2,15 +2,15 @@
 
 namespace ChloeBot
 {
-    public enum eSoulworkerNewsType
+    public enum SoulworkerNewsType
     {
         [Description("공지사항")]
-        notices,
+        Notices,
         [Description("업데이트")]
-        updates,
+        Updates,
         [Description("이벤트")]
-        events,
+        Events,
         [Description("GM매거진")]
-        gmMagazine
+        GmMagazine,
     }
 }

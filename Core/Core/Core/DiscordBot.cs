@@ -17,7 +17,7 @@ namespace ChloeBot.Core
     {
         private const string _tokenName = "Bot.token";
         private const string _tokenDownloadUrl = @"ftp://192.168.0.5/Bot.token";
-        private string TOKEN { get; } = GetToken();
+        private string Token { get; } = GetToken();
         //private readonly UInt64 APP_ID = 539448802638036992;
 
         private static DiscordSocketClient _client;
@@ -26,17 +26,16 @@ namespace ChloeBot.Core
 
         private static Task _monitor;
 
-        private IReadOnlyCollection<SocketGuild> Guilds => Client.Guilds.ToList();
+        private IReadOnlyCollection<SocketGuild> Guilds => Client.Guilds.ToArray();
 
         public static DiscordSocketClient Client => _client ?? throw new ArgumentNullException();
 
         private static string GetToken()
         {
             // debug mode only
-            if (File.Exists(_tokenName))
-                return File.ReadAllText(_tokenName);
-
-            return new WebClient().DownloadString(_tokenDownloadUrl);
+            return File.Exists(_tokenName)
+                ? File.ReadAllText(_tokenName)
+                : new WebClient().DownloadString(_tokenDownloadUrl);
         }
 
         public async Task RunBotAsync()
@@ -54,7 +53,7 @@ namespace ChloeBot.Core
             _client.Log += Log;
 
             await RegisterCommandsAsync();
-            await _client.LoginAsync(TokenType.Bot, TOKEN);
+            await _client.LoginAsync(TokenType.Bot, Token);
             await _client.StartAsync();
             await Task.Delay(-1);
         }
@@ -79,7 +78,7 @@ namespace ChloeBot.Core
             return Task.CompletedTask;
         }
 
-        private async Task SendMessage(IList<EmbedBuilder> result)
+        private async Task SendMessage(ICollection<EmbedBuilder> result)
         {
             Console.Error.WriteLine($"{DateTime.Now:HH:mm:ss}\tRegistered channel count: {Guilds.Count}");
             foreach (var client in Guilds)

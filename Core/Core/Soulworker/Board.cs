@@ -20,7 +20,7 @@ namespace ChloeBot.Soulworker
         public static string Event { get; private set; } = string.Empty;
         public static string GMMagazine { get; private set; } = string.Empty;
         private static List<string> _newItems { get; } = new List<string>();
-        private static int _boardNums { get; } = Enum.GetNames(typeof(eSoulworkerNewsType)).Length;
+        private static int _boardNums { get; } = Enum.GetNames(typeof(SoulworkerNewsType)).Length;
         private static string _filePath;
 
         private static bool _isUpdated => _newItems.Any();
@@ -46,10 +46,10 @@ namespace ChloeBot.Soulworker
                 if (data.Length != _boardNums)
                     return;
 
-                Notice = data[(int)eSoulworkerNewsType.notices];
-                Detail = data[(int)eSoulworkerNewsType.updates];
-                Event = data[(int)eSoulworkerNewsType.events];
-                GMMagazine = data[(int)eSoulworkerNewsType.gmMagazine];
+                Notice = data[(int)SoulworkerNewsType.Notices];
+                Detail = data[(int)SoulworkerNewsType.Updates];
+                Event = data[(int)SoulworkerNewsType.Events];
+                GMMagazine = data[(int)SoulworkerNewsType.GmMagazine];
             }
         }
 

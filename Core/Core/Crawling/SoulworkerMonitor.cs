@@ -9,18 +9,18 @@ namespace ChloeBot.Crawling
 {
     public class SoulworkerMonitor
     {
-        private static HttpClient _httpClient = new HttpClient();
-        private static HtmlDocument _htmlDocument = new HtmlDocument();
+        private static readonly HttpClient _httpClient = new HttpClient();
+        private static readonly HtmlDocument _htmlDocument = new HtmlDocument();
 
-        private const int _numOfBoards = 4;
-        private const string _filePath = @"db.txt";
-        private const int _allocateSize = 50; // list 형 게시글 15개 * 3, event 게시글 5개
+        private const int NumOfBoards = 4;
+        private const string FilePath = @"db.txt";
+        private const int AllocateSize = 50; // list 형 게시글 15개 * 3, event 게시글 5개
 
         /// <summary>
         /// 최신 글을 확인하고 그 결과를 반환합니다.
         /// </summary>
         /// <returns>최신 글 링크 목록</returns>
-        public static IList<EmbedBuilder> Run() => GetReplyBuilder().ToList();
+        public static ICollection<EmbedBuilder> Run() => GetReplyBuilder().ToList();
 
         private static IEnumerable<EmbedBuilder> GetReplyBuilder()
         {
@@ -29,7 +29,7 @@ namespace ChloeBot.Crawling
             foreach (var imageUrl in Board.GetNews())
             {
                 string titleString;
-                var builder = new EmbedBuilder()
+                var builder = new EmbedBuilder
                 {
                     Color = Color.Orange,
                 };
@@ -57,11 +57,11 @@ namespace ChloeBot.Crawling
 
         private static async void UpdateBoardData()
         {
-            Board.RecoveryItems(_filePath);
+            Board.RecoveryItems(FilePath);
 
-            var targetItems = new List<string>(_allocateSize);
+            var targetItems = new List<string>(AllocateSize);
 
-            foreach (var boardIdx in Enumerable.Range(0, _numOfBoards))
+            foreach (var boardIdx in Enumerable.Range(0, NumOfBoards))
             {
                 var url = SoulworkerKR.Urls[boardIdx];
                 var html = await _httpClient.GetStringAsync(url);
