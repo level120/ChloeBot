@@ -1,9 +1,13 @@
 id: 377de65628add14d58f86ab182d8edc9bc6e3487
+replaces: 8037c2264ae75509fb15a77652812f09f449f59d
 assignees: tnara9573@gmail.com
+closed: true
 created: level120	tnara9573@gmail.com	1586778327155	540
 heads: fde279b71810d7129128463a6b80b70e958535ce
+integration-commit: d5ccf54982ebe8d21c859925b45ef3764cfa1721
 source-head: b1cefe0b40611f2c3e90a2f3e193e5023106aa79
 target: refs/heads/master
 target-head: 31a69effdad27beb40c94ab1cab1fb17ae84e8fd
+updated: level120	tnara9573@gmail.com	1586781110807	540
 content
 fix: C# 8.0 문법으로 업데이트
