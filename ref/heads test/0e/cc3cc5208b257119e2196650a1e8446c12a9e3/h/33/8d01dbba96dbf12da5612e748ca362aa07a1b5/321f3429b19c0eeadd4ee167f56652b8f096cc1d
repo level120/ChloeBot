@@ -1,9 +1,11 @@
 id: 338d01dbba96dbf12da5612e748ca362aa07a1b5
+replaces: a02b858496f8c9378bfde1b3503fadc368960edf,bf3da0ca0d7b17d10e3f169f9ed3204fda2b4784
 assignees: tnara9573@gmail.com
 created: level120	tnara9573@gmail.com	1586781655896	540
 heads: 977a4731a77f22f392f8dcca52059a31e9c06cea
 source-head: 0ecc3cc5208b257119e2196650a1e8446c12a9e3
 target: refs/heads/master
 target-head: d5ccf54982ebe8d21c859925b45ef3764cfa1721
+updated: level120	tnara9573@gmail.com	1586781973542	540
 content
 git client PR test
