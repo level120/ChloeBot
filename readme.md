@@ -18,6 +18,8 @@ Monitoring targets:
 * Event
 * GM Magazine
 
+Each 30s
+
 
 ### Migration
 
