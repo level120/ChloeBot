@@ -15,46 +15,42 @@ namespace ChloeBot.Core
 {
     public class DiscordBot
     {
-        private const string _tokenName = "Bot.token";
-        private const string _tokenDownloadUrl = @"ftp://192.168.0.5/Bot.token";
-        private string Token { get; } = GetToken();
-        //private readonly UInt64 APP_ID = 539448802638036992;
+        private const string TokenName = "Bot.token";
+        private const string TokenDownloadUrl = @"ftp://192.168.0.5/Bot.token";
+        private string? Token { get; } = GetToken();
+        private IServiceProvider? _services;
 
-        private static DiscordSocketClient _client;
-        private CommandService _commands;
-        private IServiceProvider _services;
-
+        public static DiscordSocketClient Client { get; } = new DiscordSocketClient();
         private static Task _monitor;
 
         private IReadOnlyCollection<SocketGuild> Guilds => Client.Guilds.ToArray();
+        private CommandService Commands { get; } = new CommandService();
 
-        public static DiscordSocketClient Client => _client ?? throw new ArgumentNullException();
-
-        private static string GetToken()
+        private static string? GetToken()
         {
             // debug mode only
-            return File.Exists(_tokenName)
-                ? File.ReadAllText(_tokenName)
-                : new WebClient().DownloadString(_tokenDownloadUrl);
+            return File.Exists(TokenName)
+                ? File.ReadAllText(TokenName)
+                : new WebClient().DownloadString(TokenDownloadUrl);
         }
 
         public async Task RunBotAsync()
         {
-            _client = new DiscordSocketClient();
-            _commands = new CommandService();
-
             _services = new ServiceCollection()
-                .AddSingleton(_client)
-                .AddSingleton(_commands)
+                .AddSingleton(Client)
+                .AddSingleton(Commands)
                 .BuildServiceProvider();
             //You need to add the Token for your Discord Bot to the code below.
 
             //event subscriptions
-            _client.Log += Log;
+            Client.Log += Log;
+
+            if (string.IsNullOrEmpty(Token))
+                throw new ArgumentException($"Token 값이 올바르지 않습니다(Token: {Token})", nameof(Token));
 
             await RegisterCommandsAsync();
-            await _client.LoginAsync(TokenType.Bot, Token);
-            await _client.StartAsync();
+            await Client.LoginAsync(TokenType.Bot, Token);
+            await Client.StartAsync();
             await Task.Delay(-1);
         }
 
@@ -106,11 +102,11 @@ namespace ChloeBot.Core
 
         public async Task RegisterCommandsAsync()
         {
-            _client.Ready += SetGamePlayAsync;
-            _client.Ready += Monitoring;
-            _client.MessageReceived += HandleCommandAsync;
+            Client.Ready += SetGamePlayAsync;
+            Client.Ready += Monitoring;
+            Client.MessageReceived += HandleCommandAsync;
 
-            await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
+            await Commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
         }
 
         private async Task HandleCommandAsync(SocketMessage arg)
@@ -120,10 +116,10 @@ namespace ChloeBot.Core
 
             int argPos = 0;
 
-            if (message.HasStringPrefix("!", ref argPos) || message.HasMentionPrefix(_client.CurrentUser, ref argPos))
+            if (message.HasStringPrefix("!", ref argPos) || message.HasMentionPrefix(Client.CurrentUser, ref argPos))
             {
-                var context = new SocketCommandContext(_client, message);
-                var result = await _commands.ExecuteAsync(context, argPos, _services);
+                var context = new SocketCommandContext(Client, message);
+                var result = await Commands.ExecuteAsync(context, argPos, _services);
 
                 if (!result.IsSuccess)
                     Console.WriteLine(result.ErrorReason);
@@ -132,7 +128,7 @@ namespace ChloeBot.Core
 
         public async Task SetGamePlayAsync()
         {
-            await _client.SetGameAsync("Node.js로 마이그레이션");
+            await Client.SetGameAsync("Node.js로 마이그레이션");
         }
     }
 }
