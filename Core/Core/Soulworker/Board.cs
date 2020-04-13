@@ -101,11 +101,9 @@ namespace ChloeBot.Soulworker
         private static IEnumerable<string> GetNewItems(string item, List<string> items)
         {
             var itemIdx = items.FindIndex(i => i == item);
-
-            if (itemIdx < 1)
-                return null;
-
-            return items.GetRange(0, itemIdx);
+            return itemIdx < 1
+                ? Enumerable.Empty<string>()
+                : items.GetRange(0, itemIdx);
         }
 
         /// <summary>
